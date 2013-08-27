@@ -7,21 +7,29 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 using CsvHelper.Configuration;
 using CsvHelper.TypeConversion;
-#if NET_2_0
-using CsvHelper.MissingFrom20;
-#endif
-#if !NET_2_0
+//using CsvHelper.MissingFrom20;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Dynamic;
+using System.Reflection;
+//using CsvHelper.MissingFromRt45;
+
+#if NET_2_0
+
+#endif
+#if !NET_2_0
+
+
 #endif
 #if !NET_2_0 && !NET_3_5 && !WINDOWS_PHONE_7
-using System.Dynamic;
+
 #endif
 #if WINRT_4_5
-using System.Reflection;
-using CsvHelper.MissingFromRt45;
+
+
 #endif
 
 namespace CsvHelper
@@ -797,9 +805,12 @@ namespace CsvHelper
 					}
 
 					ExceptionHelper.AddExceptionDataMessage( ex, parser, typeof( T ), namedIndexes, currentIndex, currentRecord );
-					throw;
+					
+					MessageBox.Show(ex.Message + Environment.NewLine + Environment.NewLine + "Le fichier CSV que vous souhaitez importer doit provenir d'une exportation faite à partir de la commande Administration > Diffusion des identifiants.",
+					                "Erreur d'importation du fichier CSV", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+					break;
 				}
-
+				
 				yield return record;
 			}
 		}

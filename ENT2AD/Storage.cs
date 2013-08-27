@@ -27,6 +27,7 @@ namespace ENT2AD
 		private const string COMMUN_DIRNAME = "Commun";
 		private const string RESSOURCES_DIRNAME = "Ressources";
 		private const string TRAVAUX_DIRNAME = "Travaux";
+		private const string DOCUMENTS_DIRNAME = "Documents";
 		
 		public static string RootDrive { get; set; }
 		public static string RootDirectory { get; set; }
@@ -77,6 +78,18 @@ namespace ENT2AD
 		{
 			SetRootDirectory(localRootDrive);
 			Storage.CreateAndShareDirectory(ELEVES_ROOT_DIRNAME);
+			
+			FileSystemAccessRule profsCanRead = new FileSystemAccessRule(AD.PROFS_GROUPNAME,
+			                                                         FileSystemRights.ReadAndExecute,
+			                                                         InheritanceFlags.ContainerInherit | InheritanceFlags.ObjectInherit,
+			                                                         PropagationFlags.None,
+			                                                         AccessControlType.Allow);
+			
+			// le groupe professeurs peut lire les dossiers Eleves
+			DirectorySecurity dirSec = new DirectorySecurity();
+			dirSec.AddAccessRule(profsCanRead);
+			Directory.SetAccessControl(Path.Combine(RootDirectory, ELEVES_ROOT_DIRNAME), dirSec);
+			
 			Storage.CreateAndShareDirectory(PROFS_ROOT_DIRNAME);
 		}
 		
@@ -118,22 +131,33 @@ namespace ENT2AD
 						
 			string userDirPath = Path.Combine(RootDirectory, path, ENTUser.SAMAccountName);
 			
-			FileSystemAccessRule userRule = new FileSystemAccessRule(ENTUser.SAMAccountName,
+			FileSystemAccessRule userCanModify = new FileSystemAccessRule(ENTUser.SAMAccountName,
 			                                                         FileSystemRights.Modify,
 			                                                         InheritanceFlags.ContainerInherit | InheritanceFlags.ObjectInherit,
 			                                                         PropagationFlags.None,
 			                                                         AccessControlType.Allow);
 			
 			DirectorySecurity dirSec = new DirectorySecurity();
-			dirSec.AddAccessRule(userRule);
+			dirSec.AddAccessRule(userCanModify);
 			
 			DirectoryInfo userDir = Directory.CreateDirectory(userDirPath, dirSec);
 			
 			// permet de cocher la case "Inclure les autorisations pouvant être héritées du parent"
 			dirSec.SetAccessRuleProtection(false, true);
 			userDir.SetAccessControl(dirSec);
+						
+			Directory.CreateDirectory(Path.Combine(userDirPath, DOCUMENTS_DIRNAME));
+			dirSec = Directory.GetAccessControl(Path.Combine(userDirPath, DOCUMENTS_DIRNAME));
 			
-			Directory.CreateDirectory(Path.Combine(userDirPath, "Documents"));
+			FileSystemAccessRule userCannotModifyThisFolder = new FileSystemAccessRule(ENTUser.SAMAccountName,
+			                                                         FileSystemRights.Delete,
+			                                                         InheritanceFlags.None,
+			                                                         PropagationFlags.None,
+			                                                         AccessControlType.Deny);
+			
+			dirSec.AddAccessRule(userCannotModifyThisFolder);
+			Directory.SetAccessControl(Path.Combine(userDirPath, DOCUMENTS_DIRNAME), dirSec);
+			
 		}
 		
 		public static void MoveUserDirectory(string samaccountname, string oldDivision, string newDivision)
@@ -152,40 +176,74 @@ namespace ENT2AD
 		
 		private static void CreateRootClasseDirectories(string classeRootPath, string division)
 		{
+			// nouvelle règle pour autoriser la lecture de ce dossier au groupe de tous les élèves de la classe (par ex. "ENT_Classe_1S1")
+			FileSystemAccessRule divisionCanReadThisFolder = new FileSystemAccessRule(AD.CLASSE_GROUPNAME_PREFIX + division,
+			                                                         FileSystemRights.ReadAndExecute,
+			                                                         InheritanceFlags.None,
+			                                                         PropagationFlags.None,
+			                                                         AccessControlType.Allow);
+			
 			// nouvelle règle pour autoriser la lecture au groupe de tous les élèves de la classe (par ex. "ENT_Classe_1S1")
-			FileSystemAccessRule canRead = new FileSystemAccessRule(AD.CLASSE_GROUPNAME_PREFIX + division,
+			FileSystemAccessRule divisionCanRead = new FileSystemAccessRule(AD.CLASSE_GROUPNAME_PREFIX + division,
 			                                                         FileSystemRights.ReadAndExecute,
 			                                                         InheritanceFlags.ContainerInherit | InheritanceFlags.ObjectInherit,
 			                                                         PropagationFlags.None,
 			                                                         AccessControlType.Allow);
 			
-			// nouvelle règle pour autoriser la lecture et l'écriture au groupe de tous les élèves de la classe (par ex. "ENT_Classe_1S1")
-			FileSystemAccessRule canModify = new FileSystemAccessRule(AD.CLASSE_GROUPNAME_PREFIX + division,
-			                                                         FileSystemRights.Modify,
-			                                                         InheritanceFlags.ContainerInherit | InheritanceFlags.ObjectInherit,
-			                                                         PropagationFlags.None,
+			// nouvelle règle pour autoriser la création de dossier/fichiers au groupe de tous les élèves de la classe (par ex. "ENT_Classe_1S1")
+			FileSystemAccessRule divisionCanCreateDirectoriesAndFiles = new FileSystemAccessRule(AD.CLASSE_GROUPNAME_PREFIX + division,
+			                                                         FileSystemRights.CreateDirectories | FileSystemRights.CreateFiles,
+			                                                         InheritanceFlags.None,
+			                                                         PropagationFlags.NoPropagateInherit,
 			                                                         AccessControlType.Allow);
 			
+			// nouvelle règle pour autoriser la modification des sous-dossiers/fichiers au groupe de tous les élèves de la classe (par ex. "ENT_Classe_1S1")
+			FileSystemAccessRule divisionCanModifyDirectoriesAndFiles = new FileSystemAccessRule(AD.CLASSE_GROUPNAME_PREFIX + division,
+			                                                         FileSystemRights.Modify,
+			                                                         InheritanceFlags.ContainerInherit | InheritanceFlags.ObjectInherit,
+			                                                         PropagationFlags.InheritOnly,
+			                                                         AccessControlType.Allow);
+			
+			// nouvelle règle pour autoriser la modification des sous-dossiers/fichiers au groupe Professeurs
+			FileSystemAccessRule profsCanModifyDirectoriesAndFiles = new FileSystemAccessRule(AD.PROFS_GROUPNAME,
+			                                                         FileSystemRights.Modify,
+			                                                         InheritanceFlags.ContainerInherit | InheritanceFlags.ObjectInherit,
+			                                                         PropagationFlags.InheritOnly,
+			                                                         AccessControlType.Allow);
+			
+			// nouvelle règle pour autoriser la création de dossier/fichiers au groupe Professeurs
+			FileSystemAccessRule profsCanCreateDirectoriesAndFiles = new FileSystemAccessRule(AD.PROFS_GROUPNAME,
+			                                                         FileSystemRights.CreateDirectories | FileSystemRights.CreateFiles,
+			                                                         InheritanceFlags.None,
+			                                                         PropagationFlags.NoPropagateInherit,
+			                                                         AccessControlType.Allow);
+						
 			// création du répertoire "D:\ENT_Root\Eleves\1S1\_Classe_"
 			Directory.CreateDirectory(classeRootPath);
 			
 			// récupération de la liste des droits du dossier qu'on vient de créer "D:\ENT_Root\Eleves\1S1\_Classe_"
 			DirectorySecurity dirSec = Directory.GetAccessControl(classeRootPath);
 			
-			// ajout de la règle "lecture" à la liste des droits du dossier qu'on vient de créer "D:\ENT_Root\Eleves\1S1\_Classe_"
-			dirSec.AddAccessRule(canRead);
+			// le groupe classe peut uniquement lire le dossier "D:\ENT_Root\Eleves\1S1\_Classe_"
+			dirSec.AddAccessRule(divisionCanReadThisFolder);
+			Directory.SetAccessControl(classeRootPath, dirSec);
 			
-			// création du dossier "D:\ENT_Root\Eleves\1S1\_Classe_\Ressources" avec les nouveaux droits de lecture pour le groupe de la classe
-			Directory.CreateDirectory(Path.Combine(classeRootPath, RESSOURCES_DIRNAME), dirSec);
-			
-			// ajout de la règle "modification" à la liste des droits du dossier qu'on vient de créer "D:\ENT_Root\Eleves\1S1\_Classe_"
-			dirSec.AddAccessRule(canModify);									
-			
-			// création du dossier "D:\ENT_Root\Eleves\1S1\_Classe_\Commun" avec les nouveaux droits de modification pour le groupe de la classe
-			Directory.CreateDirectory(Path.Combine(classeRootPath, COMMUN_DIRNAME), dirSec);
-			
-			// création du dossier "D:\ENT_Root\Eleves\1S1\_Classe_\Travaux" avec les nouveaux droits de modification pour le groupe de la classe
+			// le groupe classe peut créer des fichiers/dossiers, mais pas lire les fichiers des autres sur "D:\ENT_Root\Eleves\1S1\_Classe_\Travaux"
+			dirSec.AddAccessRule(divisionCanCreateDirectoriesAndFiles);
+			dirSec.AddAccessRule(profsCanCreateDirectoriesAndFiles);
 			Directory.CreateDirectory(Path.Combine(classeRootPath, TRAVAUX_DIRNAME), dirSec);
+			
+			// le groupe classe peut créer et modifier des fichiers/dossiers sur "D:\ENT_Root\Eleves\1S1\_Classe_\Commun"
+			dirSec.AddAccessRule(divisionCanModifyDirectoriesAndFiles);
+			dirSec.AddAccessRule(profsCanModifyDirectoriesAndFiles);
+			Directory.CreateDirectory(Path.Combine(classeRootPath, COMMUN_DIRNAME), dirSec);
+						
+			// le groupe classe peut lire, mais ni modifier ni créer des fichiers/dossiers sur "D:\ENT_Root\Eleves\1S1\_Classe_\Ressources"
+			dirSec.RemoveAccessRule(divisionCanModifyDirectoriesAndFiles);
+			dirSec.RemoveAccessRule(divisionCanCreateDirectoriesAndFiles);
+			dirSec.RemoveAccessRule(divisionCanReadThisFolder); // inutile car inclut dans divisionCanRead
+			dirSec.AddAccessRule(divisionCanRead);
+			Directory.CreateDirectory(Path.Combine(classeRootPath, RESSOURCES_DIRNAME), dirSec);
 		}
 		
 		/// <summary>

@@ -30,6 +30,7 @@ namespace ENT2AD
 		
 		public const string CLASSE_GROUPNAME_PREFIX = "ENT_Classe_";
 		public const string CLASSE_GROUPDESC_PREFIX = "Classe de ";
+		public const string PROFS_GROUPNAME = "ENT_Professeurs";
 		
 		public static string Domain { get; set; }
 		
