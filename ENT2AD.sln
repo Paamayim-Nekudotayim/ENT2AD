@@ -1,0 +1,18 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+# SharpDevelop 4.3
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ENT2AD", "ENT2AD\ENT2AD.csproj", "{0291F660-074E-4597-874F-30A94A1E165D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0291F660-074E-4597-874F-30A94A1E165D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0291F660-074E-4597-874F-30A94A1E165D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0291F660-074E-4597-874F-30A94A1E165D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0291F660-074E-4597-874F-30A94A1E165D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+EndGlobal

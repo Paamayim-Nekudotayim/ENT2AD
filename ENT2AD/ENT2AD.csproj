@@ -1,0 +1,138 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build">
+  <PropertyGroup>
+    <ProjectGuid>{0291F660-074E-4597-874F-30A94A1E165D}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>ENT2AD</RootNamespace>
+    <AssemblyName>ENT2AD</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <DebugSymbols>True</DebugSymbols>
+    <DebugType>Full</DebugType>
+    <Optimize>False</Optimize>
+    <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <DebugSymbols>False</DebugSymbols>
+    <DebugType>None</DebugType>
+    <Optimize>True</Optimize>
+    <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
+    <DefineConstants>TRACE</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.DirectoryServices" />
+    <Reference Include="System.DirectoryServices.AccountManagement">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AD.cs" />
+    <Compile Include="CsvHelper\Configuration\CsvClassMap.cs" />
+    <Compile Include="CsvHelper\Configuration\CsvClassMapCollection.cs" />
+    <Compile Include="CsvHelper\Configuration\CsvClassMap`1.cs" />
+    <Compile Include="CsvHelper\Configuration\CsvConfiguration.cs" />
+    <Compile Include="CsvHelper\Configuration\CsvConfigurationException.cs" />
+    <Compile Include="CsvHelper\Configuration\CsvPropertyMap.cs" />
+    <Compile Include="CsvHelper\Configuration\CsvPropertyMapCollection.cs" />
+    <Compile Include="CsvHelper\Configuration\CsvPropertyMapComparer.cs" />
+    <Compile Include="CsvHelper\Configuration\CsvPropertyMapData.cs" />
+    <Compile Include="CsvHelper\Configuration\CsvPropertyReferenceMap.cs" />
+    <Compile Include="CsvHelper\Configuration\DefaultCsvClassMap`1.cs" />
+    <Compile Include="CsvHelper\CsvBadDataException.cs" />
+    <Compile Include="CsvHelper\CsvFactory.cs" />
+    <Compile Include="CsvHelper\CsvHelperException.cs" />
+    <Compile Include="CsvHelper\CsvMissingFieldException.cs" />
+    <Compile Include="CsvHelper\CsvParser.cs" />
+    <Compile Include="CsvHelper\CsvParserException.cs" />
+    <Compile Include="CsvHelper\CsvReader.cs" />
+    <Compile Include="CsvHelper\CsvReaderException.cs" />
+    <Compile Include="CsvHelper\CsvWriter.cs" />
+    <Compile Include="CsvHelper\CsvWriterException.cs" />
+    <Compile Include="CsvHelper\ExceptionHelper.cs" />
+    <Compile Include="CsvHelper\ICsvFactory.cs" />
+    <Compile Include="CsvHelper\ICsvParser.cs" />
+    <Compile Include="CsvHelper\ICsvReader.cs" />
+    <Compile Include="CsvHelper\ICsvReaderRow.cs" />
+    <Compile Include="CsvHelper\ICsvWriter.cs" />
+    <Compile Include="CsvHelper\ReflectionHelper.cs" />
+    <Compile Include="CsvHelper\StringHelper.cs" />
+    <Compile Include="CsvHelper\TypeConversion\BooleanConverter.cs" />
+    <Compile Include="CsvHelper\TypeConversion\ByteConverter.cs" />
+    <Compile Include="CsvHelper\TypeConversion\CharConverter.cs" />
+    <Compile Include="CsvHelper\TypeConversion\CsvTypeConverterException.cs" />
+    <Compile Include="CsvHelper\TypeConversion\DateTimeConverter.cs" />
+    <Compile Include="CsvHelper\TypeConversion\DecimalConverter.cs" />
+    <Compile Include="CsvHelper\TypeConversion\DefaultTypeConverter.cs" />
+    <Compile Include="CsvHelper\TypeConversion\DoubleConverter.cs" />
+    <Compile Include="CsvHelper\TypeConversion\EnumConverter.cs" />
+    <Compile Include="CsvHelper\TypeConversion\EnumerableConverter.cs" />
+    <Compile Include="CsvHelper\TypeConversion\GuidConverter.cs" />
+    <Compile Include="CsvHelper\TypeConversion\Int16Converter.cs" />
+    <Compile Include="CsvHelper\TypeConversion\Int32Converter.cs" />
+    <Compile Include="CsvHelper\TypeConversion\Int64Converter.cs" />
+    <Compile Include="CsvHelper\TypeConversion\ITypeConverter.cs" />
+    <Compile Include="CsvHelper\TypeConversion\NullableConverter.cs" />
+    <Compile Include="CsvHelper\TypeConversion\SByteConverter.cs" />
+    <Compile Include="CsvHelper\TypeConversion\SingleConverter.cs" />
+    <Compile Include="CsvHelper\TypeConversion\StringConverter.cs" />
+    <Compile Include="CsvHelper\TypeConversion\TypeConverterFactory.cs" />
+    <Compile Include="CsvHelper\TypeConversion\TypeConverterOptions.cs" />
+    <Compile Include="CsvHelper\TypeConversion\UInt16Converter.cs" />
+    <Compile Include="CsvHelper\TypeConversion\UInt32Converter.cs" />
+    <Compile Include="CsvHelper\TypeConversion\UInt64Converter.cs" />
+    <Compile Include="ENTUser.cs" />
+    <Compile Include="MainForm.cs" />
+    <Compile Include="MainForm.Designer.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Storage.cs" />
+    <Compile Include="UI\ADTreeView.cs" />
+    <Compile Include="UI\DrivesComboBox.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="MainForm.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="CsvHelper" />
+    <Folder Include="CsvHelper\Configuration" />
+    <Folder Include="CsvHelper\Properties" />
+    <Folder Include="CsvHelper\TypeConversion" />
+    <Folder Include="UI" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="CsvHelper\CsvHelper.csproj" />
+    <None Include="CsvHelper\CsvHelper.snk" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
