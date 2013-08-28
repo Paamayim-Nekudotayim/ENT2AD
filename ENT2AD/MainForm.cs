@@ -112,13 +112,16 @@ namespace ENT2AD
 		{
 			BackgroundWorker bw = sender as BackgroundWorker;
 			int i = 0;
+			int added = 0;
 			bw.ReportProgress(0, new int[] {0, ENTUsers.Users.Count, 0});
 			
 			foreach (var ENTUser in ENTUsers.Users.Values)
 			{
-				ENTUser.CreateAccountAndDirectory();
+				if (!ENTUser.CreateAccountAndDirectory())
+					added++;
+				
 				i++;
-				bw.ReportProgress(i * 100 / ENTUsers.Users.Count, new int[] {i, ENTUsers.Users.Count, ENTUsers.ADCreationFailed.Count});
+				bw.ReportProgress(i * 100 / ENTUsers.Users.Count, new int[] {i, ENTUsers.Users.Count, ENTUsers.ADCreationFailed.Count, added});
 			}
 			
 		}
@@ -129,7 +132,7 @@ namespace ENT2AD
 			
 			if (data[0] > 0)
 			{
-				label2.Text = string.Format("{2} % effectués ({0} comptes traités sur {1})", data[0], data[1], e.ProgressPercentage, data[2], data[2] > 1 ? "s" : null);
+				label2.Text = string.Format("{2} % effectués ({0} comptes traités sur {1}), {3} ajoutés.", data[0], data[1], e.ProgressPercentage, data[3]);
 			}
 			else
 			{

@@ -122,12 +122,14 @@ namespace ENT2AD
 			Storage.CreateUserDirectory(this);
 		}
 		
-		public void CreateAccountAndDirectory()
+		public bool CreateAccountAndDirectory()
 		{
 			bool isExisting = CreateAccount();
 			
 			if (!isExisting)
 				CreateUserDirectory();
+			
+			return isExisting;
 		}
 	}
 	
